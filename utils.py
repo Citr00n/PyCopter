@@ -1,3 +1,5 @@
+# Вспомогательный скрипт
+
 from random import randint as rnd
 
 

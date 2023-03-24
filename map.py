@@ -1,3 +1,5 @@
+#Скрипт карты/поля
+
 # Из utils.py импортировать метод/функцию randbool
 from utils import randbool, randcell, randcell2
 
