@@ -1,0 +1,5 @@
+pip==23.0.1
+pynput==1.7.6
+setuptools==67.4.0
+six==1.16.0
+wheel==0.38.4
