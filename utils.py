@@ -9,10 +9,13 @@ def randbool(r, mxr):
         return True
     return False
 
+
+# Генерация случайных координат от 0 до w и h
 def randcell(w, h):
-    tw = rnd(0, w-1)
-    th = rnd(0, h-1)
-    return(tw, th)
+    tw = rnd(0, w - 1)
+    th = rnd(0, h - 1)
+    return tw, th
+
 
 # 0 - наверх
 # 1 - вправо
@@ -23,4 +26,4 @@ def randcell2(x, y):
     t = rnd(0, 3)
     dx = moves[t][0]
     dy = moves[t][1]
-    return(x+dx, y+dy)
+    return x + dx, y + dy
