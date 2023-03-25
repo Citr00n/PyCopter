@@ -5,6 +5,8 @@ import time
 import os
 from pynput import keyboard
 
+os.system("pip install -r requirements.txt")
+
 # Запрос ширины и высоты поля у игрока
 MAP_W = int(input("Введите ширину экрана: "))
 MAP_H = int(input("Введите высоту экрана: "))
