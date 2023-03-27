@@ -12,8 +12,8 @@ def randbool(r, mxr):
 
 # Генерация случайных координат от 0 до w и h
 def randcell(w, h):
-    tw = rnd(0, w - 2)
-    th = rnd(0, h - 2)
+    tw = rnd(0, w - 1)
+    th = rnd(0, h - 1)
     return tw, th
 
 

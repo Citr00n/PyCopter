@@ -14,14 +14,14 @@ class Map:  # Класс карты
     def __init__(self, w, h):  # Инициализация поля
         self.w = w
         self.h = h
-        self.cells = [[0 for i in range(w)] for j in range(h)]  # Пустое поле
+        self.cells = [[0 for i in range(h)] for j in range(w)]  # Пустое поле
 
     # Отрисовка поля
     def printmap(self, heli, clouds):
-        print("🟥" * (self.w + 2))  # Отрисовка верхних
-        for i in range(self.h):
+        print("🟥" * (self.h + 2))  # Отрисовка верхних
+        for i in range(self.w):
             print("🟥", end="")  # слева каждой строки
-            for j in range(self.w):
+            for j in range(self.h):
                 if clouds.cells[i][j] == 1:
                     print("☁️", end="")
                 elif clouds.cells[i][j] == 2:
@@ -31,10 +31,10 @@ class Map:  # Класс карты
                 else:
                     print(CELLTYPES[self.cells[i][j]], end="")
             print("🟥")  # справа каждой строки
-        print("🟥" * (self.w + 2))  # И нижних границ поля
+        print("🟥" * (self.h + 2))  # И нижних границ поля
 
     # Проверка вылезания клетки за границы карты
-    def checkcell(self, y, x):
+    def checkcell(self, x, y):
         if x < 0 or y < 0 or x >= self.w or y >= self.h:  # Если x и y Меньше 0/Больше высоты или ширины
             return False
         return True
@@ -44,8 +44,8 @@ class Map:  # Класс карты
     # mxr - Знаменатель
     # В итоге шанс r/mxr (Например 5/10 - 50%)
     def genforest(self, r, mxr):
-        for i in range(self.h):
-            for j in range(self.w):
+        for i in range(self.w):
+            for j in range(self.h):
                 if randbool(r, mxr):
                     self.cells[i][j] = 1
 
@@ -84,8 +84,8 @@ class Map:  # Класс карты
 
     # Сжигание
     def burn(self):
-        for i in range(self.h):  # Если в клетке есть огонь, то очистить её (превратить в поле)
-            for j in range(self.w):
+        for i in range(self.w):  # Если в клетке есть огонь, то очистить её (превратить в поле)
+            for j in range(self.h):
                 cell = self.cells[i][j]
                 if cell == 5:
                     self.cells[i][j] = 0
@@ -94,8 +94,8 @@ class Map:  # Класс карты
 
     def heliproc(self, heli, clouds):
 
-        # Набор воды в бак
-        c = self.cells[heli.x][heli.y]  # ! Значение выходит за границы  # Поле
+        # Набор воды в бак5
+        c = self.cells[heli.x][heli.y]  # Поле
         d = clouds.cells[heli.x][heli.y]  # Облака
         if c == 2:
             heli.tank = heli.mxtank

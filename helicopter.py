@@ -22,7 +22,7 @@ class Helicopter:
         ny = dy + self.y
         # Если новое значение x больше/равно нулю (Верхние границы карты) и меньше крайней x на карте (Нижние границы)
         # Аналогично с y
-        if nx >=0 and ny >=0 and nx < self.h and ny < self.w:
+        if nx >=0 and ny >=0 and nx < self.w and ny < self.h:
             self.x = nx
             self.y = ny
 
