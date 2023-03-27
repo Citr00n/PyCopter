@@ -1,9 +1,13 @@
 # Скрипт карты/поля
 # Из utils.py импортировать метод/функцию randbool
-from utils import randbool, randcell, randcell2
+import os
+from art import *
+
+from utils import randbool, randcell, randcellnear
 
 # Типы клеток
-CELLTYPES = "🟩🌲🌊🏥💵🔥"
+CELLTYPES = "🟩🌲🌊🏥🏪🔥"
+UP_COST = 5
 
 
 class Map:  # Класс карты
@@ -13,12 +17,16 @@ class Map:  # Класс карты
         self.cells = [[0 for i in range(w)] for j in range(h)]  # Пустое поле
 
     # Отрисовка поля
-    def printmap(self, heli):
+    def printmap(self, heli, clouds):
         print("🟥" * (self.w + 2))  # Отрисовка верхних
         for i in range(self.h):
             print("🟥", end="")  # слева каждой строки
             for j in range(self.w):
-                if heli.x == i and heli.y == j:
+                if clouds.cells[i][j] == 1:
+                    print("☁️", end="")
+                elif clouds.cells[i][j] == 2:
+                    print("🌩️", end="")
+                elif heli.x == i and heli.y == j:
                     print("🚁", end="")
                 else:
                     print(CELLTYPES[self.cells[i][j]], end="")
@@ -49,7 +57,7 @@ class Map:  # Класс карты
         if self.checkcell(rx, ry):  # Проверка выхода за границу
             self.cells[rx][ry] = 2
         while L > 0:
-            rc2 = randcell2(rx, ry)
+            rc2 = randcellnear(rx, ry)
             rx2 = rc2[0]
             ry2 = rc2[1]
             if self.checkcell(rx2, ry2):  # Проверка выхода за границу
@@ -61,16 +69,18 @@ class Map:  # Класс карты
         c = randcell(self.w, self.h)
         cx = c[0]
         cy = c[1]
-        if self.cells[cx][cy] == 0:
-            self.cells[cx][cy] = 1
+        if self.checkcell(cx, cy):
+            if self.cells[cx][cy] == 0:
+                self.cells[cx][cy] = 1
 
     # Генерация огня
     def genfire(self):
         c = randcell(self.w, self.h)  # В рандомной клетке генерировать огонь (если там есть дерево)
         cx = c[0]
         cy = c[1]
-        if self.cells[cx][cy] == 1:
-            self.cells[cx][cy] = 5
+        if self.checkcell(cx, cy):
+            if self.cells[cx][cy] == 1:
+                self.cells[cx][cy] = 5
 
     # Сжигание
     def burn(self):
@@ -82,10 +92,11 @@ class Map:  # Класс карты
         for i in range(10):  # Сгенерировать огонь 10 раз
             self.genfire()
 
-    def heliproc(self, heli):
+    def heliproc(self, heli, clouds):
 
         # Набор воды в бак
-        c = self.cells[heli.x][heli.y]
+        c = self.cells[heli.x][heli.y]  # ! Значение выходит за границы  # Поле
+        d = clouds.cells[heli.x][heli.y]  # Облака
         if c == 2:
             heli.tank = heli.mxtank
 
@@ -95,3 +106,39 @@ class Map:  # Класс карты
                 self.cells[heli.x][heli.y] = 1
                 heli.tank -= 1
                 heli.score += 1
+        elif c == 4 and heli.score >= UP_COST:
+            heli.mxtank += 1
+            heli.score -= UP_COST
+        elif c == 3 and heli.score >= UP_COST:
+            heli.hp += 100
+            heli.score -= UP_COST
+        if d == 2 and heli.hp > 0:
+            heli.hp -= 10
+        elif d == 2 and heli.hp <= 0:
+            os.system("cls")
+            tprint("GAME OVER")
+            print(f"Score: {heli.score}")
+            exit(0)
+
+    def genshop(self):
+        c = randcell(self.w, self.h)
+        cx = c[0]
+        cy = c[1]
+        if self.checkcell(cx, cy):
+            self.cells[cx][cy] = 4
+
+    def genhospital(self):
+        c = randcell(self.w, self.h)
+        cx = c[0]
+        cy = c[1]
+        if self.checkcell(cx, cy):
+            if self.cells[cx][cy] != 4:  # Проверка на наличие магазина на клетке
+                self.cells[cx][cy] = 3
+            else:
+                self.genhospital()  # Попытка генерации заново
+
+    def export(self):  # Сохранение
+        return {"cells": self.cells}
+
+    def importd(self, data):  # Загрузка
+        self.cells = data["cells"]
